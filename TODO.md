@@ -1,0 +1,8 @@
+- renaming?: w_linkedlist_t , win_linklist_t , wlinkedlist_t
+- resize might need to be handled through freeing and remaking windows
+- add stub functions for each winopt event
+- add labels & textboxes (win1)
+- return dir list (win2) ( + movement )
+- timestamps (win3)
+- server component
+- client component
