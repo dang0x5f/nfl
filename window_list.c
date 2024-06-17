@@ -13,8 +13,11 @@ window_list_t* create_list(void){
 }
 
 void append_to_list(window_list_t* list, WINDOW* win){
+    list->list_size += 1;
+
     if(list->head == NULL){
         window_node_t* newnode = (window_node_t*)malloc(sizeof(window_node_t));
+        newnode->winid = list->list_size;
         newnode->window = win;
         newnode->next = NULL;
 
@@ -26,13 +29,12 @@ void append_to_list(window_list_t* list, WINDOW* win){
             iter = iter->next;
 
         window_node_t* newnode = (window_node_t*)malloc(sizeof(window_node_t));
+        newnode->winid = list->list_size;
         newnode->window = win;
         newnode->next = NULL;
 
         iter->next = newnode;
     }
-    
-    list->list_size += 1;
 }
 
 void free_list(window_list_t* list){

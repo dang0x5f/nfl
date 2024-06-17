@@ -14,15 +14,18 @@ void write_titles(window_list_t*);
 
 void assign_colors(window_list_t*);
 
-/* void display_winopts(window_list_t*, WINDOW*); */
+void display_winopts(window_list_t*, WINDOW*);
 
 void rotate_colors(window_list_t*);
 
 const char* WIN_TITLES[] = { "CONNECTION", "FILE SELECT", "LOG" };
 
-const char* WINOPTS1[] = { "q=EXIT", "tab=ROTATE", "enter=OK", "c=CONNECT", "d=DISCONNECT", NULL };
-const char* WINOPTS2[] = { "q=EXIT", "tab=ROTATE", "enter=OK", "space=SELECT", NULL };
-const char* WINOPTS3[] = { "q=EXIT", "tab=ROTATE", "esc=CLEAR", NULL };
+const char* WIN_OPTS[4][4] = {
+    { "q=EXIT", "tab=ROTATE", NULL, NULL },
+    { "enter=OK", "c=CONNECT", "d=DISCONNECT", NULL },
+    { "enter=OK", "space=SELECT", NULL, NULL },
+    { "esc=CLEAR", NULL, NULL, NULL }
+};
 
 int main(void){
     int c, quit = FALSE;
@@ -105,7 +108,7 @@ void display_windows(window_list_t* list, WINDOW* sb){
         iter = iter->next;
     } 
 
-    /* display_winopts(list, sb); */
+    display_winopts(list, sb);
     
     wrefresh(sb);
 }
@@ -134,31 +137,23 @@ void assign_colors(window_list_t* list){
     }
 }
 
-/*
 void display_winopts(window_list_t* list, WINDOW* sb){
-    int x = 0, spacing = 5;
+    int spacing = 5, i = 0;
 
     wdeleteln(sb);
     wmove(sb,0,1);
-    switch(list->focus){
-        case CONNECTION_WINDOWID:
-            mvwaddstr(sb, sb->_cury, sb->_curx, WINOPTS1[x]);
-            while(WINOPTS1[++x] != NULL)
-                mvwaddstr(sb, sb->_cury, sb->_curx + spacing, WINOPTS1[x]);
-            break;
-        case FILE_WINDOWID:
-            mvwaddstr(sb, sb->_cury, 1, WINOPTS2[x]);
-            while(WINOPTS2[++x] != NULL)
-                mvwaddstr(sb, sb->_cury, sb->_curx + spacing, WINOPTS2[x]);
-            break;
-        case LOG_WINDOWID:
-            mvwaddstr(sb, sb->_cury, 1, WINOPTS3[x]);
-            while(WINOPTS3[++x] != NULL)
-                mvwaddstr(sb, sb->_cury, sb->_curx + spacing, WINOPTS3[x]);
-            break;
-    }
+    
+    window_node_t* iter = list->head;
+    while(iter->window != list->focus)
+        iter = iter->next;
+
+    while(WIN_OPTS[0][i] != NULL)
+        mvwaddstr(sb, sb->_cury, sb->_curx + spacing, WIN_OPTS[0][i++]);
+
+    i = 0;
+    while(WIN_OPTS[iter->winid][i] != NULL)
+        mvwaddstr(sb, sb->_cury, sb->_curx + spacing, WIN_OPTS[iter->winid][i++]);
 }
-*/
 
 void rotate_colors(window_list_t* list){
     window_node_t* iter = list->head;

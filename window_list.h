@@ -4,6 +4,7 @@
 #define WINDOW_LIST_H
 
 typedef struct window_node {
+    int winid;
     WINDOW* window;
     struct window_node* next;
 } window_node_t;
