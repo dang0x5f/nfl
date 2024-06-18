@@ -1,8 +1,8 @@
-prog: fe_win.o
-	cc -lncurses fe_win.o -o prog
+prog: fe_win2.o
+	cc -lncurses fe_win2.o -o prog
 
-fe_win.o:
-	cc -c fe_win.c -o fe_win.o
+fe_win2.o:
+	cc -c fe_win2.c -o fe_win2.o
 
 .PHONY: clean tags
 tags:
