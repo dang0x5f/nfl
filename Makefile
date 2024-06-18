@@ -1,11 +1,12 @@
-prog: interface.o window_list.o
-	cc -lncurses interface.o window_list.o -o prog
+prog: fe_win.o
+	cc -lncurses fe_win.o -o prog
 
-interface.o:
-	cc -c interface.c -o interface.o
+fe_win.o:
+	cc -c fe_win.c -o fe_win.o
 
-window_list.o:
-	cc -c window_list.c -o window_list.o
+.PHONY: clean tags
+tags:
+	uctags *.c *.h
 
 clean:
-	rm *.o prog 
+	rm *.o *.out *prog *.core

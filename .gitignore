@@ -3,3 +3,4 @@ tags
 prog
 *.o
 *.swp
+*.core

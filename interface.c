@@ -21,11 +21,10 @@ void rotate_colors(window_list_t*);
 const char* WIN_TITLES[] = { "CONNECTION", "FILE SELECT", "LOG" };
 
 const char* WIN_OPTS[4][4] = {
-    { "q=EXIT", "tab=ROTATE", NULL, NULL },
-    { "enter=OK", "c=CONNECT", "d=DISCONNECT", NULL },
-    { "enter=OK", "space=SELECT", NULL, NULL },
-    { "esc=CLEAR", NULL, NULL, NULL }
-};
+    { "q=EXIT"    , "tab=ROTATE"   , NULL           , NULL },
+    { "enter=OK"  , "c=CONNECT"    , "d=DISCONNECT" , NULL },
+    { "enter=OK"  , "space=SELECT" , NULL           , NULL },
+    { "esc=CLEAR" , NULL           , NULL           , NULL }    };
 
 int main(void){
     int c, quit = FALSE;
@@ -53,6 +52,9 @@ int main(void){
             case '\t':
                 rotate_colors(wins);                
                 display_windows(wins,statusbar);
+                break;
+            case 'j':
+            case 'k':
                 break;
             default:
                 break;
@@ -87,7 +89,7 @@ void populate_list(window_list_t* list){
     wborder(three,0,0,0,0, 0,0,0,0);
     append_to_list(list, three);
 
-    list->focus = list->head->window;
+    list->focus = list->head;
 
     write_titles(list);
     assign_colors(list);
@@ -128,7 +130,7 @@ void assign_colors(window_list_t* list){
     window_node_t* iter = list->head;
 
     while(iter != NULL){
-        if(list->focus == iter->window)
+        if(list->focus == iter)
             wbkgd(iter->window, COLOR_PAIR(2));
         else
             wbkgd(iter->window, COLOR_PAIR(1));
@@ -144,7 +146,7 @@ void display_winopts(window_list_t* list, WINDOW* sb){
     wmove(sb,0,1);
     
     window_node_t* iter = list->head;
-    while(iter->window != list->focus)
+    while(iter != list->focus)
         iter = iter->next;
 
     while(WIN_OPTS[0][i] != NULL)
@@ -158,7 +160,7 @@ void display_winopts(window_list_t* list, WINDOW* sb){
 void rotate_colors(window_list_t* list){
     window_node_t* iter = list->head;
 
-    while(list->focus != iter->window)
+    while(list->focus != iter)
         iter = iter->next;
 
     wbkgd(iter->window, COLOR_PAIR(1));
@@ -171,5 +173,5 @@ void rotate_colors(window_list_t* list){
         wbkgd(iter->window, COLOR_PAIR(2));
     }
 
-    list->focus = iter->window;
+    list->focus = iter;
 }

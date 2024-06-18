@@ -11,7 +11,7 @@ typedef struct window_node {
 
 typedef struct window_list {
     window_node_t* head;
-    WINDOW* focus;
+    window_node_t* focus;
     int list_size;
 } window_list_t;
 
