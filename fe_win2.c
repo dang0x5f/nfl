@@ -1,31 +1,24 @@
 #include <stdlib.h>
 #include <ncurses.h>
-#include <dirent.h>
-#include <string.h>
-#include <sys/stat.h>
 
+#include "file_nodes.h"
 
-typedef struct pad_node{
-    WINDOW* pad;
-    char* fname;
-    char fperm[11];
-}pnode_t;
-
+#define PWD "./"
 /* #define SIZE 15 */
 /* #define SIZE 48 */
-#define SIZE 250
-#define PWD "./"
+/* #define SIZE 250 */
 
 void init_prog(void);
+
 void create_allpads(WINDOW**);
 void refresh_allpads(WINDOW**);
 void refresh_pads_range(WINDOW**,int,int,int);
+
 void start_here(WINDOW*);
+
 void move_cursor(int, WINDOW**);
 void no_scroll(int, WINDOW**);
 void with_scroll(int, WINDOW**);
-
-void populate_pads(pnode_t*);
 
 static int maxy, maxx;
 static int y, x;
@@ -41,12 +34,8 @@ int main(void){
     /* create_allpads(pads); */
     /* refresh_allpads(pads); */
 
-
-    pnode_t* pads;
-    
-
-    /* pnode_t sumfile; */
-    /* sumfile.pad = newpad(1, 50); */
+    /* fnode_t sumfile; */
+    /* sumfile.fpad = newpad(1, 50); */
     /* sumfile.fname = "breezy.mp3"; */
     /* sumfile.fperm[0] = 'd'; */
     /* sumfile.fperm[1] = 'r'; */
@@ -59,9 +48,9 @@ int main(void){
     /* sumfile.fperm[8] = '-'; */
     /* sumfile.fperm[9] = '-'; */
     /* sumfile.fperm[10] = '\0'; */
-    /* mvwprintw(sumfile.pad, 0,0, "%-25s%25s", sumfile.fname, sumfile.fperm); */
-    /* wbkgd(sumfile.pad, COLOR_PAIR(1)); */
-    /* prefresh(sumfile.pad, 0,0,    0,3,    1,maxx); */
+    /* mvwprintw(sumfile.fpad, 0,0, "%-25s%25s", sumfile.fname, sumfile.fperm); */
+    /* wbkgd(sumfile.fpad, COLOR_PAIR(1)); */
+    /* prefresh(sumfile.fpad, 0,0,    0,3,    1,maxx); */
 
 
     do {
@@ -94,7 +83,6 @@ void init_prog(void){
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_RED);
     getmaxyx(stdscr, maxy, maxx);
-
 }
 
 void create_allpads(WINDOW** pads){
@@ -142,7 +130,6 @@ void move_cursor(int key, WINDOW* pads[]){
         with_scroll(key, pads);
 }
 
-
 void no_scroll(int key, WINDOW** pads){
     if ( (key == 'k') && (y > 0) ){
         move(y - 1, x);
@@ -161,6 +148,7 @@ void no_scroll(int key, WINDOW** pads){
         prefresh(pads[y],      0,0,   y,0,    y+1,maxx);
     }
 }
+
 void with_scroll(int key, WINDOW** pads){
     if( (key == 'k') && (y > 0) ){
         move(y - 1, x);
@@ -200,24 +188,3 @@ void with_scroll(int key, WINDOW** pads){
     }
 }
 
-void populate_pads(pnode_t* pnode_arr){
-    DIR *dir_ptr;    
-    char path[50];
-    struct stat file_stat;
-    struct dirent *entry_ptr;
-
-    if((dir_ptr=opendir(PWD)) == NULL){
-        fprintf(stderr, "opendir failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    WINDOW* files[];
-    int counter = 0
-    while( (entry_ptr=readdir(dir_ptr)) != NULL){
-        strcpy(path,PWD);
-        if(stat(strcat(path,entry_ptr->d_name), &file_stat) == -1){
-            fprintf(stderr, "stat failed\n");
-        }
-        
-    }
-}
