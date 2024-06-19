@@ -11,7 +11,7 @@ typedef struct file_node{
 }fnode_t;
 
 int  populate_fnodes(fnode_t**);
-void print_fnodes(fnode_t*, int);
-void free_fnodes(fnode_t*, int);
+void print_fnodes(fnode_t**, int);
+void free_fnodes(fnode_t**, int);
 
 #endif
