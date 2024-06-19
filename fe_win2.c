@@ -6,7 +6,7 @@
 #define PWD "./"
 /* #define SIZE 15 */
 /* #define SIZE 48 */
-/* #define SIZE 250 */
+#define SIZE 250
 
 void init_prog(void);
 
@@ -52,6 +52,9 @@ int main(void){
     /* wbkgd(sumfile.fpad, COLOR_PAIR(1)); */
     /* prefresh(sumfile.fpad, 0,0,    0,3,    1,maxx); */
 
+    fnode_t* filepads;    
+    int f_cnt = populate_fnodes(&filepads);
+    draw_fnodes(&filepads, f_cnt);
 
     do {
         noecho();
@@ -66,7 +69,7 @@ int main(void){
             case 'j':
             case 'h':
             case 'l':
-                move_cursor(key, pads);
+                /* move_cursor(key, pads); */
                 break;
             default:
                 break;
@@ -74,6 +77,7 @@ int main(void){
 
     } while(!quit);
 
+    free_fnodes(&filepads, f_cnt);
     endwin();
     return(EXIT_SUCCESS);
 }
@@ -83,6 +87,7 @@ void init_prog(void){
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_RED);
     getmaxyx(stdscr, maxy, maxx);
+    refresh();
 }
 
 void create_allpads(WINDOW** pads){
