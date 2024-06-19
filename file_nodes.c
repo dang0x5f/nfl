@@ -12,7 +12,7 @@ int populate_fnodes(fnode_t** filepads){
     struct stat file_stat;
     struct dirent *entry_ptr;
 
-    const char* PWD = "./";
+    const char* PWD = "/home/dang/";
 
     if((dir_ptr=opendir(PWD)) == NULL){
         fprintf(stderr, "opendir failed\n");
@@ -68,6 +68,31 @@ void draw_fnodes(fnode_t** fpads, int count){
             wbkgd((*fpads)[i].fpad, COLOR_PAIR(1));
         prefresh((*fpads)[i].fpad,  0,0,    i,0,    i+1,getmaxx(stdscr));
     }
+}
+
+void refresh_fnodes(fnode_t** fpads, int idx, int length, int direction){
+    int maxx = getmaxx(stdscr); 
+
+
+    if(direction == 0){
+        clrtobot();
+        wbkgd((*fpads)[idx].fpad,     COLOR_PAIR(1));
+        wbkgd((*fpads)[idx + 1].fpad, A_NORMAL);
+    }
+    else if(direction == 1){
+        int tempy, tempx;
+        getyx(stdscr, tempy, tempx);
+        move(0,0);
+        clrtobot();
+        move(tempy,tempx);
+
+        wbkgd((*fpads)[idx + length].fpad,     COLOR_PAIR(1));
+        wbkgd((*fpads)[idx + length - 1].fpad, A_NORMAL);
+    }
+
+    refresh();
+    for (int i = 0, j = idx; i < getmaxy(stdscr); i++, j++)
+        prefresh((*fpads)[j].fpad, 0,0, i,0, i+1, maxx);
 }
 
 void print_fnodes(fnode_t** filepads, int f_cnt){
