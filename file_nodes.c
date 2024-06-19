@@ -61,32 +61,14 @@ int populate_fnodes(fnode_t** filepads){
     return f_cnt;
 }
 
-/*          void refresh_pads_range(WINDOW** pads, int start, int length, int dir){ */
-
-/*              if (dir == 0){ */
-/*                  wbkgd(pads[index + 1], A_NORMAL); */
-/*                  wbkgd(pads[index], COLOR_PAIR(1)); */
-/*              } */
-/*              else if(dir == 1){ */
-/*                  wbkgd(pads[index + length - 1], A_NORMAL); */
-/*                  wbkgd(pads[index + length], COLOR_PAIR(1)); */
-/*              } */
-
-/*              refresh(); */
-/*              for (int i = 0, j = start; i < maxy; i++, j++) */
-/*                  prefresh(pads[j], 0,0, i,0, i+1,maxx); */
-/*          } */
-    /* mvwprintw(sumfile.fpad, 0,0, "%-25s%25s", sumfile.fname, sumfile.fperm); */
-    /* wbkgd(sumfile.fpad, COLOR_PAIR(1)); */
-    /* prefresh(sumfile.fpad, 0,0,    0,3,    1,maxx); */
 void draw_fnodes(fnode_t** fpads, int count){
     for(int i = 0; i < count; i++){
-        mvwprintw((*fpads)[i].fpad, 0,0, "%15s  %15s",  (*fpads)[i].fname, (*fpads)[i].fperm);
-        wbkgd((*fpads)[i].fpad, COLOR_PAIR(1));
+        mvwprintw((*fpads)[i].fpad, 0,0, " %10s    %-20s", (*fpads)[i].fperm, (*fpads)[i].fname);
+        if(i == 0)
+            wbkgd((*fpads)[i].fpad, COLOR_PAIR(1));
         prefresh((*fpads)[i].fpad,  0,0,    i,0,    i+1,getmaxx(stdscr));
     }
 }
-
 
 void print_fnodes(fnode_t** filepads, int f_cnt){
 

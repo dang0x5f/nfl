@@ -8,7 +8,8 @@
 /* #define SIZE 48 */
 #define SIZE 250
 
-void init_prog(void);
+void init(void);
+void loop(void);
 
 void create_allpads(WINDOW**);
 void refresh_allpads(WINDOW**);
@@ -16,9 +17,9 @@ void refresh_pads_range(WINDOW**,int,int,int);
 
 void start_here(WINDOW*);
 
-void move_cursor(int, WINDOW**);
-void no_scroll(int, WINDOW**);
-void with_scroll(int, WINDOW**);
+void move_cursor(int, fnode_t**, int);
+void no_scroll(int, fnode_t**, int);
+void with_scroll(int, fnode_t**, int);
 
 static int maxy, maxx;
 static int y, x;
@@ -26,31 +27,28 @@ static int y, x;
 static int index;
 
 int main(void){
+
+    init();
+
+    loop();
+
+    endwin();
+
+    return(EXIT_SUCCESS);
+}
+
+void init(void){
+    initscr();
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_RED);
+    curs_set(0);
+    refresh();
+}
+
+void loop(void){
     int key, quit = FALSE;
 
-    init_prog();
-
-    /* WINDOW* pads[SIZE]; */
-    /* create_allpads(pads); */
-    /* refresh_allpads(pads); */
-
-    /* fnode_t sumfile; */
-    /* sumfile.fpad = newpad(1, 50); */
-    /* sumfile.fname = "breezy.mp3"; */
-    /* sumfile.fperm[0] = 'd'; */
-    /* sumfile.fperm[1] = 'r'; */
-    /* sumfile.fperm[2] = 'w'; */
-    /* sumfile.fperm[3] = 'x'; */
-    /* sumfile.fperm[4] = 'r'; */
-    /* sumfile.fperm[5] = '-'; */
-    /* sumfile.fperm[6] = '-'; */
-    /* sumfile.fperm[7] = 'r'; */
-    /* sumfile.fperm[8] = '-'; */
-    /* sumfile.fperm[9] = '-'; */
-    /* sumfile.fperm[10] = '\0'; */
-    /* mvwprintw(sumfile.fpad, 0,0, "%-25s%25s", sumfile.fname, sumfile.fperm); */
-    /* wbkgd(sumfile.fpad, COLOR_PAIR(1)); */
-    /* prefresh(sumfile.fpad, 0,0,    0,3,    1,maxx); */
+    getmaxyx(stdscr, maxy, maxx);
 
     fnode_t* filepads;    
     int f_cnt = populate_fnodes(&filepads);
@@ -69,7 +67,7 @@ int main(void){
             case 'j':
             case 'h':
             case 'l':
-                /* move_cursor(key, pads); */
+                move_cursor(key, &filepads, f_cnt);
                 break;
             default:
                 break;
@@ -78,16 +76,6 @@ int main(void){
     } while(!quit);
 
     free_fnodes(&filepads, f_cnt);
-    endwin();
-    return(EXIT_SUCCESS);
-}
-
-void init_prog(void){
-    initscr();
-    start_color();
-    init_pair(1, COLOR_BLACK, COLOR_RED);
-    getmaxyx(stdscr, maxy, maxx);
-    refresh();
 }
 
 void create_allpads(WINDOW** pads){
@@ -126,35 +114,47 @@ void start_here(WINDOW* pad){
     move(0,0);
 }
 
-void move_cursor(int key, WINDOW* pads[]){
+void move_cursor(int key, fnode_t** pads, int f_cnt){
     getyx(stdscr, y, x);
-    
-    if(SIZE <= maxy - 1)
-        no_scroll(key, pads);
-    else if(SIZE > maxy - 1)
-        with_scroll(key, pads);
+
+    if(f_cnt <= maxy - 1){
+        no_scroll(key, pads, f_cnt);
+    }
+
+            // debug //
+    /* wbkgd((*pads)[1].fpad, COLOR_PAIR(1)); */
+    /* prefresh((*pads)[1].fpad, 0,0, 1,0,  2,getmaxx(stdscr)); */
+
+    /* if(SIZE <= maxy - 1) */
+    /*     no_scroll(key, pads); */
+    /* else if(SIZE > maxy - 1) */
+    /*     with_scroll(key, pads); */
 }
 
-void no_scroll(int key, WINDOW** pads){
+void no_scroll(int key, fnode_t** pads, int f_cnt){
+            // debug //
+    /* wbkgd((*pads)[1].fpad, COLOR_PAIR(1)); */
+    /* prefresh((*pads)[1].fpad, 0,0, 1,0,  2,getmaxx(stdscr)); */
+
     if ( (key == 'k') && (y > 0) ){
         move(y - 1, x);
-        wbkgd(pads[y - 1], COLOR_PAIR(1));
-        wbkgd(pads[y], A_NORMAL);
+        wbkgd((*pads)[y - 1].fpad, COLOR_PAIR(1));
+        wbkgd((*pads)[y].fpad, A_NORMAL);
 
-        prefresh(pads[y - 1],  0,0,  y-1,0,  y,maxx);
-        prefresh(pads[y],      0,0,  y,0,    y+1,maxx);
+        prefresh((*pads)[y - 1].fpad,  0,0,  y-1,0,  y,maxx);
+        prefresh((*pads)[y].fpad,      0,0,  y,0,    y+1,maxx);
     }
-    else if( (key == 'j') && (y < SIZE - 1) ){
+    else if( (key == 'j') && (y < f_cnt - 1) ){
         move(y + 1, x);
-        wbkgd(pads[y + 1], COLOR_PAIR(1));
-        wbkgd(pads[y],     A_NORMAL);
+        wbkgd((*pads)[y + 1].fpad, COLOR_PAIR(1));
+        wbkgd((*pads)[y].fpad,     A_NORMAL);
 
-        prefresh(pads[y + 1],  0,0,   y+1,0,  y+2,maxx);
-        prefresh(pads[y],      0,0,   y,0,    y+1,maxx);
+        prefresh((*pads)[y + 1].fpad,  0,0,   y+1,0,  y+2,maxx);
+        prefresh((*pads)[y].fpad,      0,0,   y,0,    y+1,maxx);
     }
 }
 
-void with_scroll(int key, WINDOW** pads){
+void with_scroll(int key, fnode_t** pads, int f_cnt){
     if( (key == 'k') && (y > 0) ){
         move(y - 1, x);
         wbkgd(pads[y + index-1], COLOR_PAIR(1));
