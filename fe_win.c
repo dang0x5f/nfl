@@ -56,6 +56,11 @@ void loop(void){
 
         switch(key){
             case ENTER_KEY:
+                free_fnodes(&filepads, f_cnt);
+                clear_screen();
+                f_cnt = populate_fnodes(&filepads, "/home/dang/.vim/");
+                draw_fnodes(&filepads, f_cnt);
+                break;
             case 'q':
                 quit = TRUE;
                 break;

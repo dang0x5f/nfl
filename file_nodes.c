@@ -82,17 +82,22 @@ void refresh_fnodes(fnode_t** fpads, int idx, int length, int direction){
     else if(direction == 1){
         int tempy, tempx;
         getyx(stdscr, tempy, tempx);
-        move(0,0);
-        clrtobot();
+        clear_screen();
         move(tempy,tempx);
 
         wbkgd((*fpads)[idx + length].fpad,     COLOR_PAIR(1));
         wbkgd((*fpads)[idx + length - 1].fpad, A_NORMAL);
     }
 
-    refresh();
+    /* refresh(); */
     for (int i = 0, j = idx; i < getmaxy(stdscr); i++, j++)
         prefresh((*fpads)[j].fpad, 0,0, i,0, i+1, maxx);
+}
+
+void clear_screen(void){
+    move(0,0);
+    clrtobot();
+    refresh();
 }
 
 void print_fnodes(fnode_t** filepads, int f_cnt){

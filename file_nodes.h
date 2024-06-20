@@ -16,6 +16,8 @@ void draw_fnodes(fnode_t**, int);
 
 void refresh_fnodes(fnode_t**, int, int, int);
 
+void clear_screen(void);
+
 void print_fnodes(fnode_t**, int);
 
 void free_fnodes(fnode_t**, int);
