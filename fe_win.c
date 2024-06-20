@@ -3,8 +3,7 @@
 #include <string.h>
 #include "file_nodes.h"
 
-// ncurses "KEY_ENTER" did not work
-#define ENTER_KEY 10
+#define ENTER_KEY 10 // ncurses "KEY_ENTER" did not work
 
 void init(void);
 void loop(void);
@@ -81,12 +80,14 @@ void loop(void){
                 //
                 // fi
                 getyx(stdscr, y, x);
-                build_dirpath(&pwd, filepads[y+offset].fname);
-                free_fnodes(&filepads, f_cnt);
-                clear_screen();
-                f_cnt = populate_fnodes(&filepads, pwd);
-                draw_fnodes(&filepads, f_cnt);
-                offset = 0;
+                if( filepads[y+offset].fperm[0] == 'd' ){
+                    build_dirpath(&pwd, filepads[y+offset].fname);
+                    free_fnodes(&filepads, f_cnt);
+                    clear_screen();
+                    f_cnt = populate_fnodes(&filepads, pwd);
+                    draw_fnodes(&filepads, f_cnt);
+                    offset = 0;
+                }
                 break;
             case 'q':
                 quit = TRUE;
