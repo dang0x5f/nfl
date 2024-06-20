@@ -18,6 +18,8 @@ void refresh_fnodes(fnode_t**, int, int, int);
 
 void clear_screen(void);
 
+void build_dirpath(char**, char*);
+
 void print_fnodes(fnode_t**, int);
 
 void free_fnodes(fnode_t**, int);

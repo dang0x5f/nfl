@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <ncurses.h>
-
+#include <string.h>
 #include "file_nodes.h"
 
 // ncurses "KEY_ENTER" did not work
@@ -15,8 +15,7 @@ void with_scroll(int, fnode_t**, int);
 
 static int maxy, maxx;
 static int y, x;
-
-static int index;
+static int offset;
 
 int main(void){
 
@@ -30,11 +29,12 @@ int main(void){
 }
 
 void init(void){
-    index = 0;
+    offset = 0;
 
     initscr();
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_RED);
+    getmaxyx(stdscr, maxy, maxx);
     curs_set(0);
     keypad(stdscr,TRUE);
     refresh();
@@ -43,10 +43,11 @@ void init(void){
 void loop(void){
     int key, quit = FALSE;
 
-    getmaxyx(stdscr, maxy, maxx);
+    char* pwd = malloc(sizeof(char) * (strlen("/home/dang/")+1) );
+    strcpy(pwd, "/home/dang/");
 
     fnode_t* filepads;    
-    int f_cnt = populate_fnodes(&filepads, "/home/dang/");
+    int f_cnt = populate_fnodes(&filepads, pwd);
     draw_fnodes(&filepads, f_cnt);
 
     do {
@@ -56,10 +57,36 @@ void loop(void){
 
         switch(key){
             case ENTER_KEY:
+                // if ( fperm[0] == 'd' ) && ( !strcmp(filename, ".") )
+                //
+                //      if ( strcmp(filename, "..") )
+                //          int up_tree(){
+                //              parent_dir( currpath )
+                //              free_nodes( fpads, fcount )
+                //              clear_screen()
+                //              fcount = pop_nodes( fpads, currpath )
+                //              draw_nodes( fpads, fcount )
+                //                  return fcount
+                //          }
+                //      else
+                //          int down_tree(){
+                //              build_path( currpath, filename )
+                //              free_nodes( fpads, fcount )
+                //              clear_screen()
+                //              fcount = pop_nodes( fpads, currpath )
+                //              draw_nodes( fpads, fcount )
+                //                  return fcount
+                //          }
+                //      fi
+                //
+                // fi
+                getyx(stdscr, y, x);
+                build_dirpath(&pwd, filepads[y+offset].fname);
                 free_fnodes(&filepads, f_cnt);
                 clear_screen();
-                f_cnt = populate_fnodes(&filepads, "/home/dang/.vim/");
+                f_cnt = populate_fnodes(&filepads, pwd);
                 draw_fnodes(&filepads, f_cnt);
+                offset = 0;
                 break;
             case 'q':
                 quit = TRUE;
@@ -75,6 +102,7 @@ void loop(void){
     } while(!quit);
 
     free_fnodes(&filepads, f_cnt);
+    free(pwd);
 }
 
 void move_cursor(int key, fnode_t** pads, int f_cnt){
@@ -118,34 +146,34 @@ void with_scroll(int key, fnode_t** pads, int f_cnt){
     if( (key == 'k') && (y > 0) ){
         move(y - 1, x);
 
-        wbkgd( (*pads)[y + index - 1].fpad, COLOR_PAIR(1) );
-        wbkgd( (*pads)[y + index].fpad,     A_NORMAL      );
+        wbkgd( (*pads)[y + offset - 1].fpad, COLOR_PAIR(1) );
+        wbkgd( (*pads)[y + offset].fpad,     A_NORMAL      );
 
-        prefresh( (*pads)[y + index - 1].fpad,  0,0,  y-1,0,  y,maxx   );
-        prefresh( (*pads)[y + index].fpad,      0,0,  y,0,    y+1,maxx );
+        prefresh( (*pads)[y + offset - 1].fpad,  0,0,  y-1,0,  y,maxx   );
+        prefresh( (*pads)[y + offset].fpad,      0,0,  y,0,    y+1,maxx );
     }
 
     else if( (key == 'k') && (y == 0) ){
-        ( (--index) < 0 ) ? index = 0 : index;
-        if( (index) >= 0 )
-            refresh_fnodes(pads, index, maxy - 1, 0);
+        ( (--offset) < 0 ) ? offset = 0 : offset;
+        if( (offset) >= 0 )
+            refresh_fnodes(pads, offset, maxy - 1, 0);
         move(0,0);
     }
 
     else if( (key == 'j') && (y < maxy - 1) ){
         move(y + 1, x);
-        wbkgd( (*pads)[y + index + 1].fpad, COLOR_PAIR(1) );
-        wbkgd( (*pads)[y + index].fpad,     A_NORMAL      );
+        wbkgd( (*pads)[y + offset + 1].fpad, COLOR_PAIR(1) );
+        wbkgd( (*pads)[y + offset].fpad,     A_NORMAL      );
 
-        prefresh( (*pads)[y + index + 1].fpad, 0,0, y+1,0,  y+2,maxx );
-        prefresh( (*pads)[y + index].fpad,     0,0, y,0,    y+1,maxx );
+        prefresh( (*pads)[y + offset + 1].fpad, 0,0, y+1,0,  y+2,maxx );
+        prefresh( (*pads)[y + offset].fpad,     0,0, y,0,    y+1,maxx );
     }
     else if( (key == 'j') && (y == maxy - 1) ){
 
-        ( (++index + (maxy - 1)) == f_cnt) ? --index : index;
+        ( (++offset + (maxy - 1)) == f_cnt) ? --offset : offset;
 
-        if( (index + (maxy - 1)) < f_cnt )
-            refresh_fnodes(pads, index, maxy - 1, 1);
+        if( (offset + (maxy - 1)) < f_cnt )
+            refresh_fnodes(pads, offset, maxy - 1, 1);
         move(maxy - 1,0);
     }
 }

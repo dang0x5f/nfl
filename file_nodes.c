@@ -8,14 +8,12 @@
 
 int populate_fnodes(fnode_t** filepads, char* pwd){
     DIR *dir_ptr;    
-    char path[50];
+    char path[1024];
     struct stat file_stat;
     struct dirent *entry_ptr;
 
-    /* char* PWD = "/home/dang/"; */
-
     if((dir_ptr=opendir(pwd)) == NULL){
-        fprintf(stderr, "opendir failed\n");
+        fprintf(stderr, "opendir failed, %s\n", pwd);
         exit(EXIT_FAILURE);
     }
 
@@ -25,7 +23,7 @@ int populate_fnodes(fnode_t** filepads, char* pwd){
     while( (entry_ptr=readdir(dir_ptr)) != NULL){
         strcpy(path,pwd);
         if(stat(strcat(path,entry_ptr->d_name), &file_stat) == -1){
-            fprintf(stderr, "stat failed\n");
+            fprintf(stderr, "stat failed, %s \n%s %s\n", pwd, path, entry_ptr->d_name);
             exit(EXIT_FAILURE);
         }
 
@@ -37,7 +35,6 @@ int populate_fnodes(fnode_t** filepads, char* pwd){
             *filepads = realloc(*filepads, sizeof(fnode_t) * f_cnt);
 
         (*filepads)[f_idx].fpad = newpad(1, getmaxx(stdscr));
-        /* printf("name:%s\nlength:%hu\n", entry_ptr->d_name, entry_ptr->d_namlen); */
 
         (*filepads)[f_idx].fname = malloc( sizeof(char) * (entry_ptr->d_namlen + 1) );
         strcpy( (*filepads)[f_idx].fname, entry_ptr->d_name );
@@ -82,14 +79,16 @@ void refresh_fnodes(fnode_t** fpads, int idx, int length, int direction){
     else if(direction == 1){
         int tempy, tempx;
         getyx(stdscr, tempy, tempx);
-        clear_screen();
+        move(0,0);
+        clrtobot();
+        // refresh() needs to occur LATER, before refreshing every pad
         move(tempy,tempx);
 
         wbkgd((*fpads)[idx + length].fpad,     COLOR_PAIR(1));
         wbkgd((*fpads)[idx + length - 1].fpad, A_NORMAL);
     }
 
-    /* refresh(); */
+    refresh();
     for (int i = 0, j = idx; i < getmaxy(stdscr); i++, j++)
         prefresh((*fpads)[j].fpad, 0,0, i,0, i+1, maxx);
 }
@@ -98,6 +97,25 @@ void clear_screen(void){
     move(0,0);
     clrtobot();
     refresh();
+}
+
+void build_dirpath(char** path, char* dir){
+    char* tmp;
+    char* tmp2;
+
+    tmp = malloc(sizeof(char) * (strlen(*path) + 1) );
+    strcpy(tmp, *path);
+
+    tmp2 = malloc(sizeof(char) * (strlen(dir) + 2) );
+    strcpy(tmp2, dir);
+    strcat(tmp2, "/");
+
+    *path = realloc(*path, sizeof(char) * (strlen(*path) + strlen(tmp2) + 1) );
+    strcpy(*path, tmp);
+    strcat(*path, tmp2);
+
+    free(tmp);
+    free(tmp2);
 }
 
 void print_fnodes(fnode_t** filepads, int f_cnt){

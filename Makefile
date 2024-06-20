@@ -1,5 +1,5 @@
 prog: fe_win.o file_nodes.o
-	cc -lncurses file_nodes.o fe_win.o -o prog
+	cc -lncurses -g file_nodes.o fe_win.o -o prog
 
 fe_win.o:
 	cc -c fe_win.c -o fe_win.o
