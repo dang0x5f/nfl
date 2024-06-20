@@ -3,6 +3,9 @@
 
 #include "file_nodes.h"
 
+// ncurses "KEY_ENTER" did not work
+#define ENTER_KEY 10
+
 void init(void);
 void loop(void);
 
@@ -33,6 +36,7 @@ void init(void){
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_RED);
     curs_set(0);
+    keypad(stdscr,TRUE);
     refresh();
 }
 
@@ -42,7 +46,7 @@ void loop(void){
     getmaxyx(stdscr, maxy, maxx);
 
     fnode_t* filepads;    
-    int f_cnt = populate_fnodes(&filepads);
+    int f_cnt = populate_fnodes(&filepads, "/home/dang/");
     draw_fnodes(&filepads, f_cnt);
 
     do {
@@ -51,6 +55,7 @@ void loop(void){
         echo();
 
         switch(key){
+            case ENTER_KEY:
             case 'q':
                 quit = TRUE;
                 break;
@@ -139,4 +144,3 @@ void with_scroll(int key, fnode_t** pads, int f_cnt){
         move(maxy - 1,0);
     }
 }
-

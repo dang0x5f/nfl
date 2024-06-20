@@ -10,7 +10,7 @@ typedef struct file_node{
     char    fperm[11];
 }fnode_t;
 
-int  populate_fnodes(fnode_t**);
+int  populate_fnodes(fnode_t**, char*);
 
 void draw_fnodes(fnode_t**, int);
 

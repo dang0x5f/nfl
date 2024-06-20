@@ -6,15 +6,15 @@
 
 #include "file_nodes.h"
 
-int populate_fnodes(fnode_t** filepads){
+int populate_fnodes(fnode_t** filepads, char* pwd){
     DIR *dir_ptr;    
     char path[50];
     struct stat file_stat;
     struct dirent *entry_ptr;
 
-    const char* PWD = "/home/dang/";
+    /* char* PWD = "/home/dang/"; */
 
-    if((dir_ptr=opendir(PWD)) == NULL){
+    if((dir_ptr=opendir(pwd)) == NULL){
         fprintf(stderr, "opendir failed\n");
         exit(EXIT_FAILURE);
     }
@@ -23,7 +23,7 @@ int populate_fnodes(fnode_t** filepads){
     int f_cnt = 0;
 
     while( (entry_ptr=readdir(dir_ptr)) != NULL){
-        strcpy(path,PWD);
+        strcpy(path,pwd);
         if(stat(strcat(path,entry_ptr->d_name), &file_stat) == -1){
             fprintf(stderr, "stat failed\n");
             exit(EXIT_FAILURE);
