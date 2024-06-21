@@ -8,7 +8,8 @@
 
 int populate_fnodes(fnode_t** filepads, char* pwd){
     DIR *dir_ptr;    
-    char path[1024];
+    /* char path[1024]; */
+    char* path;
     struct stat file_stat;
     struct dirent *entry_ptr;
 
@@ -21,6 +22,7 @@ int populate_fnodes(fnode_t** filepads, char* pwd){
     int f_cnt = 0;
 
     while( (entry_ptr=readdir(dir_ptr)) != NULL){
+        path = malloc(sizeof(char) * ( strlen(pwd) + entry_ptr->d_namlen + 1 ) ); // could be swapped out later
         strcpy(path,pwd);
         if(stat(strcat(path,entry_ptr->d_name), &file_stat) == -1){
             fprintf(stderr, "stat failed, %s \n%s %s\n", pwd, path, entry_ptr->d_name);
@@ -52,6 +54,7 @@ int populate_fnodes(fnode_t** filepads, char* pwd){
         (*filepads)[f_idx].fperm[10] = '\0';
 
         f_idx++;
+        free(path);
     }
 
     closedir(dir_ptr);
@@ -133,6 +136,7 @@ void print_fnodes(fnode_t** filepads, int f_cnt){
 void free_fnodes(fnode_t** filepads, int f_cnt){
     for(int i = 0; i < f_cnt; i++){
         free( (*filepads)[i].fname );
+        delwin( (*filepads)[i].fpad );
     }
     free(*filepads);
 }
