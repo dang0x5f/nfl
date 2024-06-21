@@ -102,7 +102,26 @@ void clear_screen(void){
     refresh();
 }
 
-void build_dirpath(char** path, char* dir){
+void retract_dirpath(char** path){
+    int i;
+    int len = (strlen(*path) - 2);
+    char delim = '/';
+    char* temp = malloc(sizeof(char) * (strlen(*path)+1) );
+    strcpy(temp, *path);
+
+    while( (*path)[len] != delim )
+        len--;
+    len++;
+    
+    *path = realloc( *path, sizeof(char) * (len + 1) );
+    for(i = 0; i < len; i++)
+        (*path)[i] = temp[i];
+    (*path)[i] = '\0';
+
+    free(temp);
+}
+
+void extend_dirpath(char** path, char* dir){
     char* tmp;
     char* tmp2;
 

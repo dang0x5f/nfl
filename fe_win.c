@@ -56,37 +56,28 @@ void loop(void){
 
         switch(key){
             case ENTER_KEY:
-                // if ( fperm[0] == 'd' ) && ( !strcmp(filename, ".") )
-                //
-                //      if ( strcmp(filename, "..") )
-                //          int up_tree(){
-                //              parent_dir( currpath )
-                //              free_nodes( fpads, fcount )
-                //              clear_screen()
-                //              fcount = pop_nodes( fpads, currpath )
-                //              draw_nodes( fpads, fcount )
-                //                  return fcount
-                //          }
-                //      else
-                //          int down_tree(){
-                //              build_path( currpath, filename )
-                //              free_nodes( fpads, fcount )
-                //              clear_screen()
-                //              fcount = pop_nodes( fpads, currpath )
-                //              draw_nodes( fpads, fcount )
-                //                  return fcount
-                //          }
-                //      fi
-                //
-                // fi
                 getyx(stdscr, y, x);
-                if( filepads[y+offset].fperm[0] == 'd' ){
-                    build_dirpath(&pwd, filepads[y+offset].fname);
-                    free_fnodes(&filepads, f_cnt);
-                    clear_screen();
-                    f_cnt = populate_fnodes(&filepads, pwd);
-                    draw_fnodes(&filepads, f_cnt);
-                    offset = 0;
+                if( (filepads[y+offset].fperm[0] == 'd') && (strcmp(filepads[y+offset].fname,".") != 0) ){
+                    if ( (strcmp(filepads[y+offset].fname, "..") == 0) && ( strcmp(pwd, "/") != 0) ){
+                        // up tree
+                        retract_dirpath(&pwd);
+                        free_fnodes(&filepads, f_cnt);
+                        clear_screen();
+                        f_cnt = populate_fnodes(&filepads, pwd);
+mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd);
+                        draw_fnodes(&filepads, f_cnt);
+                        offset = 0;
+                    }
+                    else{
+                        // down tree
+                        extend_dirpath(&pwd, filepads[y+offset].fname);
+                        free_fnodes(&filepads, f_cnt);
+                        clear_screen();
+                        f_cnt = populate_fnodes(&filepads, pwd);
+mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd);
+                        draw_fnodes(&filepads, f_cnt);
+                        offset = 0;
+                    }
                 }
                 break;
             case 'q':

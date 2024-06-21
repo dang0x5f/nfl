@@ -18,7 +18,9 @@ void refresh_fnodes(fnode_t**, int, int, int);
 
 void clear_screen(void);
 
-void build_dirpath(char**, char*);
+void retract_dirpath(char**);
+
+void extend_dirpath(char**, char*);
 
 void print_fnodes(fnode_t**, int);
 
