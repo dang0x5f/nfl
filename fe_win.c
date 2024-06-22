@@ -64,7 +64,7 @@ void loop(void){
                         free_fnodes(&filepads, f_cnt);
                         clear_screen();
                         f_cnt = populate_fnodes(&filepads, pwd);
-mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd);
+/* mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd); */
                         draw_fnodes(&filepads, f_cnt);
                         offset = 0;
                     }
@@ -74,7 +74,7 @@ mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd);
                         free_fnodes(&filepads, f_cnt);
                         clear_screen();
                         f_cnt = populate_fnodes(&filepads, pwd);
-mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd);
+/* mvwprintw((filepads)[y+offset].fpad, 0,50, "%s", pwd); */
                         draw_fnodes(&filepads, f_cnt);
                         offset = 0;
                     }
